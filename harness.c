@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "cprintf.h"
 
+
 void
 ischartoken_test(){
     const char * const restrict p = "Hello, world!\n";
@@ -58,9 +59,29 @@ isstrtoken_test(){
     assert( q == NULL );
 }
 
+void
+create_atom_test(){
+    struct atom *a;
+
+    for( int i = 1; i<4; i++ ){
+        for( int j = 10; j<40; j=j+10 ){
+            fprintf(stdout,"%s:%d Adding atom tag=%d.\n", __FILE__, __LINE__, i+j);
+            if( j == 10 ){
+                a = create_atom( true );
+            }else{
+                a = create_atom( false );
+            }
+            a->new_field_width = i+j;
+        }
+    }
+    assert( a->new_field_width = 44 );
+}
+
 int main(){
     ischartoken_test();
     isstrtoken_test();
+    create_atom_test();   
     return 0;
+
 }
 
