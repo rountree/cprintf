@@ -62,10 +62,12 @@ isstrtoken_test(){
 void
 create_atom_test(){
     struct atom *a;
-
+    /* 11 21 31
+     * 12 22 32
+     * 13 23 33
+     */
     for( int i = 1; i<4; i++ ){
         for( int j = 10; j<40; j=j+10 ){
-            fprintf(stdout,"%s:%d Adding atom tag=%d.\n", __FILE__, __LINE__, i+j);
             if( j == 10 ){
                 a = create_atom( true );
             }else{
@@ -74,7 +76,21 @@ create_atom_test(){
             a->new_field_width = i+j;
         }
     }
-    assert( a->new_field_width = 44 );
+    dump_graph();
+    /*
+    assert( a->new_field_width );
+    assert( 33 == a->new_field_width );
+    assert( a->left->new_field_width );
+    assert( 23 == a->left->new_field_width );
+    assert( a->left->left->new_field_width );
+    assert( 13 == a->left->left->new_field_width );
+    assert( a->left->left->up );
+    assert( a->left->left->up->new_field_width );
+    assert( 12 == a->left->left->up->new_field_width );
+    assert( 11 == a->left->left->up->up->new_field_width );
+    assert( 11 == a->up->up->left->left->new_field_width );
+    assert( 11 == a->up->left->up->left->new_field_width );
+    */
 }
 
 int main(){

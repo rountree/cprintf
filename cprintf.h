@@ -25,6 +25,8 @@ struct atom{
     struct atom *down;
 };
 
+void dump_graph( void );
+void dump_atom( struct atom * a );
 struct atom * create_atom( bool is_newline );
 bool ischartoken( const char * const restrict p, const char c, const char ** restrict q );
 bool isstrtoken( const char * const restrict p, const char * const restrict s, const char ** restrict q );
