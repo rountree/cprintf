@@ -32,185 +32,67 @@ dump_graph( void ){
 
 struct atom *
 create_atom( bool is_newline ){
-    static struct atom *start_of_current_line = NULL;
-    static struct atom *end_of_current_line = NULL;
+    /* "Creating" an atom means grabbing the next unpopulated atom and creating
+     * new atoms below and to the right of it, then updating the links.*/
+    static struct atom *next_unpopulated_atom = NULL;
+    static struct atom *next_unpopulated_line = NULL;
 
-    //fprintf(stdout, "%s:%d on entry:  end_of_current_line=%p\n", 
-    //        __FILE__, __LINE__, end_of_current_line);
-   
-    struct atom *a, *d, *b, *r; 
+    struct atom *a;
 
     if( NULL == origin ){
-        /* a
-         * d
-         */
-        a = calloc( sizeof(struct atom), 1 );
-        assert(a);
-        d = calloc( sizeof(struct atom), 1 );
-        assert(d);
-
-        origin = a;
-        start_of_current_line = a;
-        end_of_current_line = a;
-
-        a->populated=true;
-        a->right = NULL;
-        a->left  = NULL;
-        a->up    = NULL;
-        a->down  = d;
-
-        d->populated=false;
-        d->right = NULL;
-        d->left  = NULL;
-        d->up    = a;
-        d->down  = NULL;
-        //fprintf(stdout, "%s:%d end_of_current_line->down=%p\n",
-        //        __FILE__, __LINE__, end_of_current_line->down);
-        // Sanity checks (a)
-        assert( a );
-        assert( NULL == a->up );
-        assert( NULL == a->right );
-        assert( d    == a->down );
-        assert( NULL == a->left );
-        assert( a->down->up == a );
-        assert( true == a->populated );
-
-        // Sanity checks (d)
-        assert( d );
-        assert( a    == d->up );
-        assert( NULL == d->right );
-        assert( NULL == d->down );
-        assert( NULL == d->left );
-        assert( d->up->down == d );
-        assert( false== d->populated );
-
-        // Sanity checks (static)
-        assert ( start_of_current_line == a );
-        assert ( end_of_current_line   == a );
-
-    }else if( is_newline ){
-        /* a
-         * d
-         */
-        assert( start_of_current_line );
-        assert( start_of_current_line->down );
-        a = start_of_current_line->down;
-
-        d = calloc( sizeof(struct atom), 1 );
-        assert(d);
-
-        start_of_current_line = a;
-        end_of_current_line   = a;
-
-        a->populated=true;
-        a->right = NULL;
-        a->left  = NULL;
-        //a->up    = NULL;
-        a->down  = d;
-
-        d->populated=false;
-        d->right = NULL;
-        d->left  = NULL;
-        d->up    = a;
-        d->down  = NULL;
-
-        // sanity checks (a)
-        assert( a );
-        assert( NULL == a->right );
-        assert( NULL == a->left  );
-        assert( a->down );
-        assert( a->down->up == a );
-        assert( true == a->populated );
-
-        // sanity checks (d)
-        assert( d );
-        assert( a    == d->up );
-        assert( NULL == d->right );
-        assert( NULL == d->down );
-        assert( NULL == d->left );
-        assert( d->up->down == d );
-        assert( false== d->populated );
-
-        // Sanity checks (static)
-        assert ( start_of_current_line == a );
-        assert ( end_of_current_line   == a );
-
+        origin = calloc( sizeof( struct atom ), 1 );
+        assert(origin);
+        a = next_unpopulated_atom = next_unpopulated_line = origin;
+    }else if( false == is_newline ){
+        assert( next_unpopulated_atom );
+        a = next_unpopulated_atom;
     }else{
-        /* a r
-         * b d
-         */
-        a = end_of_current_line;
-        assert(a);
-        assert(a->populated);
-        assert(a->down);
-
-        b = a->down;
-        assert(b);
-        assert(!b->populated);
-        assert(b->up);
-
-        r = calloc( sizeof(struct atom), 1 );
-        assert(r);
-        d = calloc( sizeof(struct atom), 1 );
-        assert(d);
-
-        end_of_current_line = r;
-
-        r->populated = true;
-
-        a->right        = r;
-        r->left         = a;
-        r->down         = d;
-        d->up           = r;
-        d->left         = a->down;
-        a->down->right  = d;
-
-
-        assert( a );
-        assert( a->right );
-        assert( a->right == r );
-        assert( a->right->left == a );
-        assert( a->down );
-        assert( a->down == b );
-        assert( a->down->up == a );
-        assert( true == a->populated );
-
-        assert( b );
-        assert( b->up );
-        assert( b->up == a );
-        assert( b->up->down == b );
-        assert( b->right );
-        assert( b->right == d );
-        assert( b->right->left == b );
-        assert( NULL == b->down );
-        assert( false == b->populated );
-
-        assert( r );
-        assert( r->down );
-        assert( r->down == d );
-        assert( r->down->up == r );
-        assert( r->left );
-        assert( r->left == a );
-        assert( r->left->right == r );
-        assert( true == r->populated );
-
-        assert( d );
-        assert( d->up );
-        assert( d->up == r );
-        assert( d->up->down == d );
-        assert( NULL == d->right );
-        assert( NULL == d->down );
-        assert( d->left );
-        assert( d->left == b );
-        assert( d->left->right == d );
-        assert( false == d->populated );
-
-        assert( r == end_of_current_line );
+        assert( next_unpopulated_line );
+        a = next_unpopulated_line;
     }
-    //fprintf(stdout, "%s:%d on exit:   end_of_current_line=%p\n", 
-    //        __FILE__, __LINE__, end_of_current_line);
-    //dump_atom(end_of_current_line);
-    return end_of_current_line;
+
+    // At this point "a" should be a previously-allocated, unpopulated atom.
+    assert( false == a->populated );
+
+    // Populating
+    a->populated = true;
+
+    // RIGHT
+    if( NULL == a->right ){
+        a->right = calloc( sizeof( struct atom ), 1 );
+        assert( a->right );
+    }
+    if( NULL == a->right->left ){
+        a->right->left = a;
+    }
+    assert( a->right->left == a );
+
+    // DOWN
+    if( NULL == a->down ){
+        a->down = calloc( sizeof( struct atom ), 1 );
+        assert( a->down );
+    }
+    if( NULL == a->down->up ){
+        a->down->up = a;
+    }
+    assert( a->down->up = a );
+
+    // corner case
+    if( NULL != a->left ){
+        assert( a->left->down );
+        assert( a->down );
+        a->left->down->right = a->down;
+        a->down->left = a->left->down;
+    }
+
+    // update statics
+    if( is_newline ){
+        next_unpopulated_line = a->down;
+    }
+    next_unpopulated_atom = a->right;
+
+    // That's it!
+    return a;    
 }
 
 bool

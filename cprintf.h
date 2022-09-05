@@ -18,6 +18,11 @@ struct atom{
     // use this for parts of the format string that aren't conversion specifications.
     const char *text;
 
+    // id (all zero-indexed)
+    size_t row;
+    size_t col;
+    size_t count;
+
     // navigation
     struct atom *right;
     struct atom *left;

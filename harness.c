@@ -77,7 +77,6 @@ create_atom_test(){
         }
     }
     dump_graph();
-    /*
     assert( a->new_field_width );
     assert( 33 == a->new_field_width );
     assert( a->left->new_field_width );
@@ -90,7 +89,6 @@ create_atom_test(){
     assert( 11 == a->left->left->up->up->new_field_width );
     assert( 11 == a->up->up->left->left->new_field_width );
     assert( 11 == a->up->left->up->left->new_field_width );
-    */
 }
 
 int main(){
