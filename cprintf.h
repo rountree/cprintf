@@ -31,6 +31,7 @@ struct atom{
 };
 
 void dump_graph( void );
+void free_graph( struct atom *a );
 void dump_atom( struct atom * a );
 struct atom * create_atom( bool is_newline );
 bool ischartoken( const char * const restrict p, const char c, const char ** restrict q );

@@ -76,19 +76,28 @@ create_atom_test(){
             a->new_field_width = i+j;
         }
     }
-    dump_graph();
+    //dump_graph();
     assert( a->new_field_width );
     assert( 33 == a->new_field_width );
+    assert( a->left );
     assert( a->left->new_field_width );
     assert( 23 == a->left->new_field_width );
-    assert( a->left->left->new_field_width );
-    assert( 13 == a->left->left->new_field_width );
-    assert( a->left->left->up );
-    assert( a->left->left->up->new_field_width );
-    assert( 12 == a->left->left->up->new_field_width );
-    assert( 11 == a->left->left->up->up->new_field_width );
-    assert( 11 == a->up->up->left->left->new_field_width );
-    assert( 11 == a->up->left->up->left->new_field_width );
+    assert( a->left->up );
+    assert( a->left->up->new_field_width );
+    assert( 22 == a->left->up->new_field_width );
+    assert( a->left->up->left );
+    assert( a->left->up->left->new_field_width );
+    assert( 12 == a->left->up->left->new_field_width );
+    assert( a->left->up->left->up );
+    assert( a->left->up->left->up->new_field_width );
+    assert( 11 == a->left->up->left->up->new_field_width );
+    assert( a->left->up->left->up->right );
+    assert( a->left->up->left->up->right->new_field_width );
+    assert( 21 == a->left->up->left->up->right->new_field_width );
+    assert( a->left->up->left->up->right->down );
+    assert( a->left->up->left->up->right->down->new_field_width );
+    assert( 22 == a->left->up->left->up->right->down->new_field_width );
+    free_graph( NULL );
 }
 
 int main(){
