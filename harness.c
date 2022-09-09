@@ -4,6 +4,7 @@
 #include "cprintf.h"
 
 int main(){
+    /*
     cprintf("foo");
     cprintf("foo\n");
     cprintf("%s");
@@ -11,6 +12,8 @@ int main(){
     cprintf("%#30x");
     cprintf("%#030.7f");
     cprintf("%#030.7llf");
+    */
+    cprintf("%#030.7llf %s foo %I.8zu");
     return 0;
 
 }
