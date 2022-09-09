@@ -13,7 +13,15 @@ int main(){
     cprintf("%#030.7f");
     cprintf("%#030.7llf");
     */
-    cprintf("%#030.7llf %s foo %I.8zu");
+    cprintf("%d %d %d\n", a, b, c);
+    cprintf("%d %d %d\n", a, b, c);
+    cprintf("%d %d %d\n", a, b, c);
+    cprintf("%d %d %d\n", a, b, c);
+    cprintf("%d %d %d\n", a, b, c);
+    cprintf("%d %d %d\n", a, b, c);
+    cprintf("%d %d %d\n", a, b, c);
+    cprintf("%d %d %d\n", a, b, c);
+    cflush();
     return 0;
 
 }
