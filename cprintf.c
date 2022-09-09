@@ -8,41 +8,17 @@
 #include <stdarg.h>     // variadic
 #include "cprintf.h"
 
-struct atom{
-    bool populated;
-    bool is_conversion_specification;
-    size_t original_field_width;
-    size_t new_field_width;
-
-    char *original_specification;
-    char *new_specification;
-    char *flags;
-    char *field_width;
-    char *precision;
-    char *length_modifier;
-    char *conversion_specifier;
-    char *ordinary_text;
-
-    va_list *pargs;
-
-    // navigation
-    struct atom *right;
-    struct atom *left;
-    struct atom *up;
-    struct atom *down;
-};
-
 static struct atom * origin = NULL;
 
 
 
-static void
+void
 dump_atom( struct atom * a ){
     fprintf(stdout, "%s:%d tag=%zu a=%10p a->up=%10p a->down=%10p a->left=%10p a->right=%10p\n",
             __FILE__, __LINE__, a->new_field_width, a, a->up, a->down, a->left, a->right );
 }
 
-static void
+void
 dump_graph( void ){
     struct atom *a, *linestart=origin;
     static size_t line=0;
@@ -57,7 +33,7 @@ dump_graph( void ){
     }
 }
 
-static void
+void
 free_graph( struct atom *a ){
     if( NULL == origin ){
         return;
@@ -85,7 +61,7 @@ free_graph( struct atom *a ){
 }
 
 
-static struct atom *
+struct atom *
 create_atom( bool is_newline ){
     /* "Creating" an atom means grabbing the next unpopulated atom and creating
      * new atoms below and to the right of it, then updating the links.*/
@@ -125,14 +101,14 @@ create_atom( bool is_newline ){
 // %[flags][field_width][.precision][length_modifier]specifier
 
 
-static ptrdiff_t
+ptrdiff_t
 parse_flags( const char *p ){
     // Returns the number of bytes starting from the beginning
     // of p that consist only of the characters #0- +'I
     return strspn( p, "#0- +'I" );
 }
 
-static ptrdiff_t
+ptrdiff_t
 parse_field_width( const char *p ){
     // Returns the number of bytes in the field width,
     // or zero of no field width specified.
@@ -142,7 +118,7 @@ parse_field_width( const char *p ){
     return end - p;
 }
 
-static ptrdiff_t
+ ptrdiff_t
 parse_precision( const char *p ){
     char *end;
     // Returns the number of bytes representing
@@ -156,14 +132,14 @@ parse_precision( const char *p ){
     }
 }
 
-static ptrdiff_t 
+ptrdiff_t 
 parse_length_modifier( const char *p ){
     // length modifiers are:
     // h, hh, l, ll, L, q, j, z, t
     return strspn( p, "hlLqjzt" );
 }
 
-static ptrdiff_t 
+ptrdiff_t 
 parse_conversion_specifier( const char *p ){
     // conversion specifiers are:
     // d, i, o, u, x, X, e, E, f, F, g, G, a, A, c, C, s, S, p, n, m, %
@@ -173,7 +149,7 @@ parse_conversion_specifier( const char *p ){
     return d;
 }
 
-static void
+void
 archive( const char *p, ptrdiff_t span, char **q ){
     static char *empty = "";
     if( 0 == span ){
@@ -184,13 +160,13 @@ archive( const char *p, ptrdiff_t span, char **q ){
     }
 }
 
-static bool
+bool
 is( char *p, const char *q ){
     // return true if the strings are identical.
     size_t len = strlen( q );
     return (bool) ! strncmp( p, q, len );
 }
-
+#if 0
 static void
 calc_actual_width( struct atom *a ){
     // FIXME Not (yet) supporting 'n' as a
@@ -315,7 +291,7 @@ calc_actual_width( struct atom *a ){
     assert( strnlen(buf, 4096) < 4095 );
     a->original_field_width = strlen( buf );
 }
-
+#endif
 void
 cprintf( const char *fmt, ... ){
     va_list args;
@@ -364,7 +340,7 @@ cprintf( const char *fmt, ... ){
 
             archive( p, (q-p)+1, &(a->original_specification) ); 
 
-            calc_actual_width( a );
+            //calc_actual_width( a );
 
             fprintf( stdout, "%s:%d a->original_specification=\"%s\"\n", __FILE__, __LINE__, a->original_specification );
             fprintf( stdout, "\n");
@@ -383,6 +359,4 @@ cprintf( const char *fmt, ... ){
     }
     va_end(args);
 }
-
-
 
