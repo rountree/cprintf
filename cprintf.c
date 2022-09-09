@@ -14,8 +14,8 @@ static struct atom * origin = NULL;
 
 void
 dump_atom( struct atom * a ){
-    fprintf(stdout, "%s:%d tag=%zu a=%10p a->up=%10p a->down=%10p a->left=%10p a->right=%10p\n",
-            __FILE__, __LINE__, a->new_field_width, a, a->up, a->down, a->left, a->right );
+    fprintf(stdout, "%s:%d tag=%s a=%10p a->up=%10p a->down=%10p a->left=%10p a->right=%10p\n",
+            __FILE__, __LINE__, a->original_specification, a, a->up, a->down, a->left, a->right );
 }
 
 void
