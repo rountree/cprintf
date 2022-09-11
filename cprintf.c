@@ -22,6 +22,89 @@ dump_atom( struct atom * a ){
 }
 
 void
+dump_graph_2( void ){
+    struct atom *a = origin, *c;
+    while( NULL != a ){
+        // Address of this atom.
+        c = a;
+        while( NULL != c ){
+            printf("p=%-20p", c );
+            c = c->right;
+        }
+        printf("\n");
+
+        // Address of atom to the left.
+        c = a;
+        while( NULL != c ){
+            printf("l=%-20p", c->left );
+            c = c->right;
+        }
+        printf("\n");
+
+        // Address of atom to the right.
+        c = a;
+        while( NULL != c ){
+            printf("r=%-20p", c->right );
+            c = c->right;
+        }
+        printf("\n");
+
+        // Address of atom above.
+        c = a;
+        while( NULL != c ){
+            printf("u=%-20p", c->up );
+            c = c->right;
+        }
+        printf("\n");
+
+        // Address of atom below.
+        c = a;
+        while( NULL != c ){
+            printf("d=%-20p", c->down );
+            c = c->right;
+        }
+        printf("\n");
+
+        // is this atom a conversion specification?
+        c = a;
+        while( NULL != c ){
+            printf("isconvspec=%-11c", c->is_conversion_specification ? 't' : 'f' );
+            c = c->right;
+        }
+        printf("\n");
+
+        // pointer to the ordinary text
+        c = a;
+        while( NULL != c ){
+            printf("o=%-20p", c->ordinary_text );
+            c = c->right;
+        }
+        printf("\n");
+
+        // pointer to original specification
+        c = a;
+        while( NULL != c ){
+            printf("orig=%-17s", c->original_specification );
+            c = c->right;
+        }
+        printf("\n");
+
+        // pointer to new specification
+        c = a;
+        while( NULL != c ){
+            printf("new= %-17s", c->new_specification );
+            c = c->right;
+        }
+        printf("\n");
+
+
+        printf("\n");
+        a = a->down;
+    }
+    fflush(NULL);
+}
+
+void
 dump_graph( void ){
     struct atom *a, *linestart=origin;
     static size_t line=0;
@@ -367,13 +450,13 @@ generate_new_specs(){
             c = a;
             while( NULL != c ){
                 rc = snprintf(buf, 4099, "%%%s%zu%s%s%s",
-                        a->flags,
-                        a->new_field_width,
-                        a->precision,
-                        a->length_modifier,
-                        a->conversion_specifier);
+                        c->flags,
+                        c->new_field_width,
+                        c->precision,
+                        c->length_modifier,
+                        c->conversion_specifier);
                 assert( rc < 4099 );
-                archive( buf, strlen(buf), &(a->new_specification));
+                archive( buf, strlen(buf), &(c->new_specification));
                 c = c->down;
             }
         }
@@ -390,31 +473,31 @@ print_something_already(){
         c = a;
         while( NULL != c ){
             if( c->is_conversion_specification ){
-                strncat( buf, a->new_specification, 4099 ); //FIXME
-                switch( a->type ){
-                    case C_INT:                 printf( buf, a->val.c_int );                break;
-                    case C_WINT_T:              printf( buf, a->val.c_wint_t );             break;
-                    case C_CHARX:               printf( buf, a->val.c_charx );              break;
-                    case C_WCHAR_TX:            printf( buf, a->val.c_wchar_tx );           break;
-                    case C_LONG:                printf( buf, a->val.c_long );               break;
-                    case C_LONG_LONG:           printf( buf, a->val.c_long_long );          break;
-                    case C_INTMAX_T:            printf( buf, a->val.c_intmax_t );           break;
-                    case C_SSIZE_T:             printf( buf, a->val.c_ssize_t );            break;
-                    case C_PTRDIFF_T:           printf( buf, a->val.c_ptrdiff_t );          break;
-                    case C_UNSIGNED_INT:        printf( buf, a->val.c_unsigned_int );       break;
-                    case C_UNSIGNED_LONG:       printf( buf, a->val.c_unsigned_long );      break;
-                    case C_UNSIGNED_LONG_LONG:  printf( buf, a->val.c_unsigned_long_long ); break;
-                    case C_UINTMAX_T:           printf( buf, a->val.c_uintmax_t );          break;
-                    case C_SIZE_T:              printf( buf, a->val.c_size_t );             break;
-                    case C_DOUBLE:              printf( buf, a->val.c_double );             break;
-                    case C_LONG_DOUBLE:         printf( buf, a->val.c_long_double );        break;
-                    case C_VOIDX:               printf( buf, a->val.c_voidx );              break;
+                strncat( buf, c->new_specification, 4099 ); //FIXME
+                switch( c->type ){
+                    case C_INT:                 printf( buf, c->val.c_int );                break;
+                    case C_WINT_T:              printf( buf, c->val.c_wint_t );             break;
+                    case C_CHARX:               printf( buf, c->val.c_charx );              break;
+                    case C_WCHAR_TX:            printf( buf, c->val.c_wchar_tx );           break;
+                    case C_LONG:                printf( buf, c->val.c_long );               break;
+                    case C_LONG_LONG:           printf( buf, c->val.c_long_long );          break;
+                    case C_INTMAX_T:            printf( buf, c->val.c_intmax_t );           break;
+                    case C_SSIZE_T:             printf( buf, c->val.c_ssize_t );            break;
+                    case C_PTRDIFF_T:           printf( buf, c->val.c_ptrdiff_t );          break;
+                    case C_UNSIGNED_INT:        printf( buf, c->val.c_unsigned_int );       break;
+                    case C_UNSIGNED_LONG:       printf( buf, c->val.c_unsigned_long );      break;
+                    case C_UNSIGNED_LONG_LONG:  printf( buf, c->val.c_unsigned_long_long ); break;
+                    case C_UINTMAX_T:           printf( buf, c->val.c_uintmax_t );          break;
+                    case C_SIZE_T:              printf( buf, c->val.c_size_t );             break;
+                    case C_DOUBLE:              printf( buf, c->val.c_double );             break;
+                    case C_LONG_DOUBLE:         printf( buf, c->val.c_long_double );        break;
+                    case C_VOIDX:               printf( buf, c->val.c_voidx );              break;
                     default:
                                                 assert(0);
                                                 break;
                 }
             }else{
-                strncat( buf, a->ordinary_text, 4099 ); //FIXME
+                strncat( buf, c->ordinary_text, 4099 ); //FIXME
                 printf( "%s", buf );
             }
             c = c->right;

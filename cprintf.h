@@ -74,6 +74,7 @@ struct atom{
 
 void dump_atom( struct atom * a );
 void dump_graph( void );
+void dump_graph_2( void );
 void free_graph( struct atom *a );
 struct atom * create_atom( bool is_newline );
 ptrdiff_t parse_flags( const char *p );
