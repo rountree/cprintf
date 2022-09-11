@@ -4,7 +4,7 @@ lib:
 	clang -std=gnu2x -shared -o libcprintf.so cprintf.o
 
 test: lib
-	clang -std=gnu2x -Wall -Wextra -Werror -o harness harness.c libcprintf.a
+	clang -fsanitize=undefined,address -std=gnu2x -Wall -Wextra -Werror -o harness harness.c libcprintf.a
 	./harness
 
 clean:

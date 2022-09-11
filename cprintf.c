@@ -17,8 +17,9 @@ static struct atom * origin = NULL;
 
 void
 dump_atom( struct atom * a ){
-    fprintf(stdout, "%s:%d tag=%s a=%10p a->up=%10p a->down=%10p a->left=%10p a->right=%10p\n",
-            __FILE__, __LINE__, a->original_specification, a, a->up, a->down, a->left, a->right );
+    fprintf(stdout, "%s:%d orig=%6s w=%2zu a=%14p a->up=%14p a->down=%14p a->left=%14p a->right=%14p\n",
+            __FILE__, __LINE__, a->original_specification, a->original_field_width, 
+            a, a->up, a->down, a->left, a->right );
 }
 
 void
@@ -311,39 +312,30 @@ cprintf( const char *fmt, ... ){
             a->is_conversion_specification = true;
 
             q++; // Skip over initial '%'
-            fprintf( stdout, "%s:%d *q = '%c'\n", __FILE__, __LINE__, *q );
 
             span = parse_flags( q );
             archive( q, span, &(a->flags) );
             q += span;
-            fprintf( stdout, "%s:%d a->flags=\"%s\"\n", __FILE__, __LINE__, a->flags );
             
             span = parse_field_width( q );
             archive( q, span, &(a->field_width) );
             q += span;
-            fprintf( stdout, "%s:%d a->field_width=\"%s\"\n", __FILE__, __LINE__, a->field_width );
 
             span = parse_precision( q );
             archive( q, span, &(a->precision) );
             q += span;
-            fprintf( stdout, "%s:%d a->precision=\"%s\"\n", __FILE__, __LINE__, a->precision );
 
             span = parse_length_modifier( q );
             archive( q, span, &(a->length_modifier) );
             q += span;
-            fprintf( stdout, "%s:%d a->length_modifier=\"%s\"\n", __FILE__, __LINE__, a->length_modifier );
 
             span = parse_conversion_specifier( q );
             archive( q, span, &(a->conversion_specifier) );
             q += span;
-            fprintf( stdout, "%s:%d a->conversion_specifier=\"%s\"\n", __FILE__, __LINE__, a->conversion_specifier );
 
-            archive( p, (q-p)+1, &(a->original_specification) ); 
+            archive( p, q-p, &(a->original_specification) ); 
 
             calc_actual_width( a );
-
-            fprintf( stdout, "%s:%d a->original_specification=\"%s\"\n", __FILE__, __LINE__, a->original_specification );
-            fprintf( stdout, "\n");
 
             p = q;
         }else{
@@ -352,8 +344,6 @@ cprintf( const char *fmt, ... ){
             a->is_conversion_specification = false;
             archive( q, d, &(a->ordinary_text) );
             q += d;
-            fprintf( stdout, "%s:%d a->ordinary_text=\"%s\"\n", __FILE__, __LINE__, a->ordinary_text );
-            fprintf( stdout, "\n");
             p = q;
         }
     }
