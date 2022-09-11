@@ -1,4 +1,6 @@
 #include <stddef.h>
+#include <wchar.h>      // wint_t
+#include <stdint.h>     // intmax_t
 
 // These are the types that printf and friends are aware of.
 // Recall that types shorter than int (e.g., char and short)
@@ -19,6 +21,7 @@ typedef union{
     uintmax_t           c_uintmax_t;
     size_t              c_size_t;
     double              c_double;
+    long double         c_long_double;
     void*               c_voidx;
 }value;
 
@@ -35,9 +38,10 @@ typedef enum{
     C_UNSIGNED_INT,
     C_UNSIGNED_LONG,
     C_UNSIGNED_LONG_LONG,
-    C_UINT_MAX_T,
+    C_UINTMAX_T,
     C_SIZE_T,
     C_DOUBLE,
+    C_LONG_DOUBLE,
     C_VOIDX
 }type_t;
 

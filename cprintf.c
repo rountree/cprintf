@@ -205,38 +205,56 @@ calc_actual_width( struct atom *a ){
     static char buf[4097]; 
     if( is(a->conversion_specifier, "c") ){
         if( is( a->length_modifier, "" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), int ) );
+            a->type = C_INT;
+            a->val.c_int = va_arg( *(a->pargs), int );
+            snprintf( buf, 4096, a->original_specification, a->val.c_int );
         }else if( is( a->length_modifier, "l" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), wint_t ) );
+            a->type = C_WINT_T;
+            a->val.c_wint_t = va_arg( *(a->pargs), wint_t );
+            snprintf( buf, 4096, a->original_specification, a->val.c_wint_t );
         }else{
             assert(0);
         }
     }else if( is(a->conversion_specifier, "s") ){
         if( is( a->length_modifier, "" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), char* ) );
+            a->type = C_CHARX;
+            a->val.c_charx = va_arg( *(a->pargs), char* );
+            snprintf( buf, 4096, a->original_specification, a->val.c_charx );
         }else if( is( a->length_modifier, "l" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), wchar_t* ) );
+            a->type = C_WCHAR_TX;
+            a->val.c_wchar_tx = va_arg( *(a->pargs), wchar_t* );
+            snprintf( buf, 4096, a->original_specification, a->val.c_wchar_tx );
         }else{
             assert(0);
         }
     }else if( is(a->conversion_specifier, "d") 
           ||  is(a->conversion_specifier, "i") ){
-        if( is( a->length_modifier, "hh" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), int ) );
-        }else if( is( a->length_modifier, "h" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), int ) );
-        }else if( is( a->length_modifier, "" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), int ) );
+        if( is( a->length_modifier, "hh" ) 
+        ||  is( a->length_modifier, "h" ) 
+        ||  is( a->length_modifier, "" ) ){
+            a->type = C_INT;
+            a->val.c_int = va_arg( *(a->pargs), int );
+            snprintf( buf, 4096, a->original_specification, a->val.c_int );
         }else if( is( a->length_modifier, "l" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), long ) );
+            a->type = C_LONG;
+            a->val.c_long = va_arg( *(a->pargs), long );
+            snprintf( buf, 4096, a->original_specification, a->val.c_long );
         }else if( is( a->length_modifier, "ll" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), long long ) );
+            a->type = C_LONG_LONG;
+            a->val.c_long_long = va_arg( *(a->pargs), long long );
+            snprintf( buf, 4096, a->original_specification, a->val.c_long_long );
         }else if( is( a->length_modifier, "j" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), intmax_t ) );
+            a->type = C_INTMAX_T;
+            a->val.c_intmax_t = va_arg( *(a->pargs), intmax_t );
+            snprintf( buf, 4096, a->original_specification, a->val.c_intmax_t );
         }else if( is( a->length_modifier, "z" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), ssize_t ) );
+            a->type = C_SSIZE_T;
+            a->val.c_ssize_t = va_arg( *(a->pargs), ssize_t );
+            snprintf( buf, 4096, a->original_specification, a->val.c_ssize_t );
         }else if( is( a->length_modifier, "t" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), ptrdiff_t ) );
+            a->type = C_PTRDIFF_T;
+            a->val.c_ptrdiff_t = va_arg( *(a->pargs), ptrdiff_t );
+            snprintf( buf, 4096, a->original_specification, a->val.c_ptrdiff_t );
         }else{
             assert(0);
         }
@@ -244,22 +262,35 @@ calc_actual_width( struct atom *a ){
           ||  is(a->conversion_specifier, "x") 
           ||  is(a->conversion_specifier, "X") 
           ||  is(a->conversion_specifier, "u") ){
-        if( is( a->length_modifier, "hh" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), int ) );
-        }else if( is( a->length_modifier, "h" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), int ) );
+        if( is( a->length_modifier, "hh" ) 
+        ||  is( a->length_modifier, "h" ) ){
+            a->type = C_INT;
+            a->val.c_int = va_arg( *(a->pargs), int );
+            snprintf( buf, 4096, a->original_specification, a->val.c_int );
         }else if( is( a->length_modifier, "" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), unsigned int ) );
+            a->type = C_UNSIGNED_INT;
+            a->val.c_unsigned_int = va_arg( *(a->pargs), unsigned int );
+            snprintf( buf, 4096, a->original_specification, a->val.c_unsigned_int );
         }else if( is( a->length_modifier, "l" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), unsigned long ) );
+            a->type = C_UNSIGNED_LONG;
+            a->val.c_unsigned_long = va_arg( *(a->pargs), unsigned long );
+            snprintf( buf, 4096, a->original_specification, a->val.c_unsigned_long );
         }else if( is( a->length_modifier, "ll" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), unsigned long long ) );
+            a->type = C_UNSIGNED_LONG_LONG;
+            a->val.c_unsigned_long_long = va_arg( *(a->pargs), unsigned long long );
+            snprintf( buf, 4096, a->original_specification, a->val.c_unsigned_long_long );
         }else if( is( a->length_modifier, "j" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), uintmax_t ) );
+            a->type = C_UINTMAX_T;
+            a->val.c_uintmax_t = va_arg( *(a->pargs), uintmax_t );
+            snprintf( buf, 4096, a->original_specification, a->val.c_uintmax_t );
         }else if( is( a->length_modifier, "z" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), size_t ) );
+            a->type = C_SIZE_T;
+            a->val.c_size_t = va_arg( *(a->pargs), size_t );
+            snprintf( buf, 4096, a->original_specification, a->val.c_size_t );
         }else if( is( a->length_modifier, "t" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), ptrdiff_t ) );
+            a->type = C_PTRDIFF_T;
+            a->val.c_ptrdiff_t = va_arg( *(a->pargs), ptrdiff_t );
+            snprintf( buf, 4096, a->original_specification, a->val.c_ptrdiff_t );
         }else{
             assert(0);
         }
@@ -273,15 +304,21 @@ calc_actual_width( struct atom *a ){
           ||  is(a->conversion_specifier, "G") ){
         if( is( a->length_modifier, "l" )
         ||  is( a->length_modifier, "" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), double) );
+            a->type = C_DOUBLE;
+            a->val.c_double = va_arg( *(a->pargs), double );
+            snprintf( buf, 4096, a->original_specification, a->val.c_double );
         }else if( is( a->length_modifier, "L" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), long double) );
+            a->type = C_LONG_DOUBLE;
+            a->val.c_long_double = va_arg( *(a->pargs), long double );
+            snprintf( buf, 4096, a->original_specification, a->val.c_long_double );
         }else{
             assert(0);
         }
     }else if( is(a->conversion_specifier, "p") ){
         if( is( a->length_modifier, "" ) ){
-            snprintf( buf, 4096, a->original_specification, va_arg( *(a->pargs), void* ) );
+            a->type = C_VOIDX;
+            a->val.c_voidx = va_arg( *(a->pargs), void* );
+            snprintf( buf, 4096, a->original_specification, a->val.c_voidx );
         }else{
             assert(0);
         }
@@ -335,7 +372,7 @@ generate_new_specs(){
                         a->precision,
                         a->length_modifier,
                         a->conversion_specifier);
-                assert( c < 4099 );
+                assert( rc < 4099 );
                 archive( buf, strlen(buf), &(a->new_specification));
                 c = c->down;
             }
@@ -347,7 +384,6 @@ generate_new_specs(){
 void
 print_something_already(){
     char buf[4099];
-    int rc;
     struct atom *a = origin, *c;
     assert( NULL != a );
     while( NULL != a ){
@@ -355,11 +391,35 @@ print_something_already(){
         while( NULL != c ){
             if( c->is_conversion_specification ){
                 strncat( buf, a->new_specification, 4099 ); //FIXME
+                switch( a->type ){
+                    case C_INT:                 printf( buf, a->val.c_int );                break;
+                    case C_WINT_T:              printf( buf, a->val.c_wint_t );             break;
+                    case C_CHARX:               printf( buf, a->val.c_charx );              break;
+                    case C_WCHAR_TX:            printf( buf, a->val.c_wchar_tx );           break;
+                    case C_LONG:                printf( buf, a->val.c_long );               break;
+                    case C_LONG_LONG:           printf( buf, a->val.c_long_long );          break;
+                    case C_INTMAX_T:            printf( buf, a->val.c_intmax_t );           break;
+                    case C_SSIZE_T:             printf( buf, a->val.c_ssize_t );            break;
+                    case C_PTRDIFF_T:           printf( buf, a->val.c_ptrdiff_t );          break;
+                    case C_UNSIGNED_INT:        printf( buf, a->val.c_unsigned_int );       break;
+                    case C_UNSIGNED_LONG:       printf( buf, a->val.c_unsigned_long );      break;
+                    case C_UNSIGNED_LONG_LONG:  printf( buf, a->val.c_unsigned_long_long ); break;
+                    case C_UINTMAX_T:           printf( buf, a->val.c_uintmax_t );          break;
+                    case C_SIZE_T:              printf( buf, a->val.c_size_t );             break;
+                    case C_DOUBLE:              printf( buf, a->val.c_double );             break;
+                    case C_LONG_DOUBLE:         printf( buf, a->val.c_long_double );        break;
+                    case C_VOIDX:               printf( buf, a->val.c_voidx );              break;
+                    default:
+                                                assert(0);
+                                                break;
+                }
             }else{
                 strncat( buf, a->ordinary_text, 4099 ); //FIXME
+                printf( "%s", buf );
             }
+            c = c->right;
         }
-        vprintf
+        a = a->down;
     }
 }
 
@@ -412,7 +472,7 @@ cprintf( const char *fmt, ... ){
             archive( p, q-p, &(a->original_specification) ); 
 
             calc_actual_width( a );
-
+            a->pargs = NULL;    // cleanup
             p = q;
         }else{
             // We've found some normal text.
@@ -431,4 +491,5 @@ void
 cflush(){ 
     calc_max_width();
     generate_new_specs();
+    print_something_already();
 }
