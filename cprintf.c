@@ -22,7 +22,7 @@ dump_atom( struct atom * a ){
 }
 
 void
-dump_graph_2( void ){
+dump_graph( void ){
     struct atom *a = origin, *c;
     while( NULL != a ){
         // Address of this atom.
@@ -102,21 +102,6 @@ dump_graph_2( void ){
         a = a->down;
     }
     fflush(NULL);
-}
-
-void
-dump_graph( void ){
-    struct atom *a, *linestart=origin;
-    static size_t line=0;
-    while(linestart != NULL){
-        fprintf(stdout, "%s:%d Line %zu\n", __FILE__, __LINE__, line++ );
-        a = linestart;
-        while( a != NULL ){
-            dump_atom( a );
-            a = a->right;
-        }
-        linestart = linestart->down;
-    }
 }
 
 void
