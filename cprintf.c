@@ -131,40 +131,51 @@ free_graph( struct atom *a ){
     return;
 }
 
-
 struct atom *
 create_atom( bool is_newline ){
-    /* "Creating" an atom means grabbing the next unpopulated atom and creating
-     * new atoms below and to the right of it, then updating the links.*/
-    static struct atom *last_populated_atom = NULL;
-    static struct atom *last_populated_line = NULL;
+    static struct atom *last_atom_on_last_line = NULL;
+    static struct atom *first_atom_on_last_line = NULL;
 
-    struct atom *a;
+    struct atom *a = calloc( sizeof( struct atom ), 1 );
+    assert(a);
+    
+    // recall the value of NULL is implementation-specific.
+    a->original_specification       = NULL;
+    a->new_specification            = NULL;
+
+    a->flags                        = NULL;
+    a->field_width                  = NULL;
+    a->precision                    = NULL;
+    a->length_modifier              = NULL;
+    a->conversion_specifier         = NULL;
+
+    a->ordinary_text                = NULL;
+    a->pargs                        = NULL;
+
+    a->right                        = NULL;
+    a->left                         = NULL;
+    a->up                           = NULL;
+    a->down                         = NULL;
 
     if( NULL == origin ){
-        origin = calloc( sizeof( struct atom ), 1 );
-        a = last_populated_atom = last_populated_line = origin;
-        a->populated = true;
+        first_atom_on_last_line = origin = a;
     }else if(is_newline){
-        a = last_populated_line;
-        a->down = calloc( sizeof( struct atom ), 1 );
-        assert( a->down );
-        a->down->up = a;
-        a->down->populated = true;
-        last_populated_atom = last_populated_line = a->down;
+        // new line, only need to set up and down.
+        first_atom_on_last_line->down = a;
+        a->up = first_atom_on_last_line;
+        first_atom_on_last_line = a;
     }else{
-        a = last_populated_atom;
-        a->right = calloc( sizeof( struct atom ), 1 );
-        assert( a->right );
-        a->right->left = a;
-        if( a->up ){
-            a->right->up = a->up->right;
-            a->up->right->down = a->right;
+        // adding to an existing line, need to set
+        // left/right and (maybe) up/down.
+        last_atom_on_last_line->right = a;
+        a->left = last_atom_on_last_line;
+        if(last_atom_on_last_line->up){
+            a->up = last_atom_on_last_line->up->right;
+            last_atom_on_last_line->up->right->down = a;
         }
-        a->right->populated = true;
-        last_populated_atom = a->right;
     }
-    return last_populated_atom;
+    last_atom_on_last_line = a;
+    return a;
 }
 
 

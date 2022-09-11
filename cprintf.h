@@ -46,13 +46,16 @@ typedef enum{
 }type_t;
 
 struct atom{
-    bool populated;
+    // Atoms should be allocated with calloc().  However, the value of
+    // NULL is implementation-dependent, so be sure any new pointers
+    // added here are explicitly set to NULL in create_atom().
     bool is_conversion_specification;
     size_t original_field_width;
     size_t new_field_width;
 
     char *original_specification;
     char *new_specification;
+
     char *flags;
     char *field_width;
     char *precision;
