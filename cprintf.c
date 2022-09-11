@@ -13,12 +13,11 @@
 
 static struct atom * origin = NULL;
 
-
-
 void
 dump_atom( struct atom * a ){
-    fprintf(stdout, "%s:%d orig=%6s w=%2zu a=%14p a->up=%14p a->down=%14p a->left=%14p a->right=%14p\n",
-            __FILE__, __LINE__, a->original_specification, a->original_field_width, 
+    fprintf(stdout, "%s:%d orig=%6s w=%4zu wmax=%4zu a=%14p a->up=%14p a->down=%14p a->left=%14p a->right=%14p\n",
+            __FILE__, __LINE__, 
+            a->original_specification, a->original_field_width, a->new_field_width,
             a, a->up, a->down, a->left, a->right );
 }
 
@@ -294,20 +293,97 @@ calc_actual_width( struct atom *a ){
 }
 
 void
+calc_max_width(){
+    struct atom *a = origin, *c;
+    assert( NULL != a );
+    size_t w = 0;
+    while( NULL != a ){
+        if( a->is_conversion_specification ){
+            c = a;
+            while( NULL != c ){
+                // find max field width
+                if( c->original_field_width > w ){
+                    w = c->original_field_width;
+                }
+                c = c->down;
+            }
+            c = a;
+            while( NULL != c){
+                // set max field width
+                c->new_field_width = w;
+                c = c->down;
+            }
+            w = 0;
+        }
+        a = a->right;
+    }
+}
+
+void
+generate_new_specs(){
+    char buf[4099];
+    int rc;
+    struct atom *a = origin, *c;
+    assert( NULL != a );
+    while( NULL != a ){
+        if( a->is_conversion_specification ){
+            c = a;
+            while( NULL != c ){
+                rc = snprintf(buf, 4099, "%%%s%zu%s%s%s",
+                        a->flags,
+                        a->new_field_width,
+                        a->precision,
+                        a->length_modifier,
+                        a->conversion_specifier);
+                assert( c < 4099 );
+                archive( buf, strlen(buf), &(a->new_specification));
+                c = c->down;
+            }
+        }
+        a = a->right;
+    }
+}
+
+void
+print_something_already(){
+    char buf[4099];
+    int rc;
+    struct atom *a = origin, *c;
+    assert( NULL != a );
+    while( NULL != a ){
+        c = a;
+        while( NULL != c ){
+            if( c->is_conversion_specification ){
+                strncat( buf, a->new_specification, 4099 ); //FIXME
+            }else{
+                strncat( buf, a->ordinary_text, 4099 ); //FIXME
+            }
+        }
+        vprintf
+    }
+}
+
+void
 cprintf( const char *fmt, ... ){
     va_list args;
     struct atom *a;
     const char *p = fmt, *q = fmt;
     ptrdiff_t d = 0;
     ptrdiff_t span;
-
+    /* There's a reasonable argument that newlines should be indicated by
+       '\n' in the ordinary text, which would allow successive calls to 
+       cprintf() to populate a single line.  This raises, however, the
+       question of what to do with cprintf("\n\n") and similar.  For now,
+       keep parsing easy.
+    */
+    bool is_newline = true;
     va_start( args, fmt );
     while( *p != '\0' ){
         d = strcspn( p, "%" ); 
         q = p;
         if( d == 0 ){
             // We've found a converstion specification.
-            a = create_atom( false );
+            a = create_atom( is_newline );
             a->pargs = &args;
             a->is_conversion_specification = true;
 
@@ -340,13 +416,19 @@ cprintf( const char *fmt, ... ){
             p = q;
         }else{
             // We've found some normal text.
-            a = create_atom( false );
+            a = create_atom( is_newline );
             a->is_conversion_specification = false;
             archive( q, d, &(a->ordinary_text) );
             q += d;
             p = q;
         }
+        is_newline = false;
     }
     va_end(args);
 }
 
+void
+cflush(){ 
+    calc_max_width();
+    generate_new_specs();
+}
