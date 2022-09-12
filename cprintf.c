@@ -262,9 +262,11 @@ archive( const char *p, ptrdiff_t span, char **q ){
 
 bool
 is( char *p, const char *q ){
-    // return true if the strings are identical.
-    size_t len = strlen( q );
-    return (bool) ! strncmp( p, q, len );
+    // return true if the strings are identical.  Note either p or q
+    // may be an empty string on length 0.
+    size_t lenp = strlen( p );
+    size_t lenq = strlen( q );
+    return lenp == lenq ? (bool) ! strncmp( p, q, lenq ) : false;
 }
 static void
 calc_actual_width( struct atom *a ){

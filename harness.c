@@ -11,7 +11,10 @@ int main(){
     dump_graph();
     free_graph();
 
-    cprintf("a=%07.4f b= %07.5lf\n", 1.2, 1.2L );
+    printf("============\n");
+    fflush(NULL);
+
+    cprintf("a=%07.4f b= %07.5Lf\n", 1.2, 1.2L );
     /*
     cprintf("a=%07.4lf b= %07.5lf\n", 10.22, 10.22L );
     cprintf("a=%07.4lf b= %07.5lf\n", 100.222, 100.222L );
