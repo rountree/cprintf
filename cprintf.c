@@ -14,14 +14,6 @@
 static struct atom * origin = NULL;
 
 void
-dump_atom( struct atom * a ){
-    fprintf(stdout, "%s:%d orig=%6s w=%4zu wmax=%4zu a=%14p a->up=%14p a->down=%14p a->left=%14p a->right=%14p\n",
-            __FILE__, __LINE__, 
-            a->original_specification, a->original_field_width, a->new_field_width,
-            a, a->up, a->down, a->left, a->right );
-}
-
-void
 dump_graph( void ){
     struct atom *a = origin, *c;
     while( NULL != a ){
@@ -92,7 +84,7 @@ dump_graph( void ){
         // pointer to new specification
         c = a;
         while( NULL != c ){
-            printf("new= %-17s", c->new_specification );
+            printf("new =%-17s", c->new_specification );
             c = c->right;
         }
         printf("\n");
@@ -105,30 +97,58 @@ dump_graph( void ){
 }
 
 void
-free_graph( struct atom *a ){
+_free_graph( struct atom *a ){
+    // Check to see if any graph exists.
     if( NULL == origin ){
         return;
     }
+
+    // Starts the process.
     if( NULL == a ){
         a = origin;
     }
+
+    // Find the rightmost atom in the top line.
     if( a->right ){
-        free_graph( a->right );
+        _free_graph( a->right );
     }
+
+    // For each atom in the top line, find the last atom in that column.
     if( a->down ){
-        free_graph( a->down );
+        _free_graph( a->down );
     }
+
+    // If we're at the point where we're looking at the atom in the top left
+    // corner, we're done.
     if( a == origin ){
         origin = NULL;
     }
+
+    // If there's an atom above us, disconnect from it.
     if( a->up ){
         a->up->down = NULL;
     }
+
+    // If there's an atom to the left of us, disconnect from it.
     if( a->left ){
         a->left->right = NULL;
     }
+    free( a->original_specification );
+    free( a->new_specification );
+    free( a->flags );
+    free( a->field_width );
+    free( a->precision );
+    free( a->length_modifier );
+    free( a->conversion_specifier );
+    free( a->ordinary_text );
     free( a );
+
     return;
+}
+
+void
+free_graph(){
+    _free_graph( NULL );
 }
 
 struct atom *
@@ -233,13 +253,11 @@ parse_conversion_specifier( const char *p ){
 
 void
 archive( const char *p, ptrdiff_t span, char **q ){
-    static char *empty = "";
-    if( 0 == span ){
-        *q = empty;
-    }else{
-        *q = calloc( span+1, 1 );
-        strncpy( *q, p, span );
-    }
+    // This will call calloc for null strings (strings with
+    // a length of 0 consisting only of a terminating null).
+    // This allows _free_graph() to be a little dumber.
+    *q = calloc( span+1, 1 );
+    strncpy( *q, p, span );
 }
 
 bool

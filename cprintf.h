@@ -48,7 +48,8 @@ typedef enum{
 struct atom{
     // Atoms should be allocated with calloc().  However, the value of
     // NULL is implementation-dependent, so be sure any new pointers
-    // added here are explicitly set to NULL in create_atom().
+    // added here are explicitly set to NULL in create_atom() and freed
+    // in free_graph();
     bool is_conversion_specification;
     size_t original_field_width;
     size_t new_field_width;
@@ -75,9 +76,9 @@ struct atom{
     struct atom *down;
 };
 
-void dump_atom( struct atom * a );
 void dump_graph( void );
-void free_graph( struct atom *a );
+void _free_graph( struct atom *a );
+void free_graph();
 struct atom * create_atom( bool is_newline );
 ptrdiff_t parse_flags( const char *p );
 ptrdiff_t parse_field_width( const char *p );
