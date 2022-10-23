@@ -5,5 +5,5 @@
 *.a
 *.so
 *.core
-harness
+example
 
