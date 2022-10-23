@@ -8,7 +8,6 @@ int main(){
     cprintf("%d %d %d\n", 10, 20, 30);
     cprintf("%d %d %d\n", 100, 200, 300);
     cflush();
-    free_graph();
 
     printf("============\n");
 
@@ -17,7 +16,6 @@ int main(){
     cprintf("a=%07.4lf b= %07.5Lf\n", 100.222, 100.222L );
     cprintf("a=%07.4lf b= %07.5Lf\n", 1000.2222, 1000.2222L );
     cflush();
-    free_graph();
 
     printf("============\n");
 
@@ -26,7 +24,6 @@ int main(){
     cprintf("%0d | %.2f | %p | %-c \n", 20000, 300000.14, cprintf, 'y');
     cprintf("%0d | %.2f | %p | %-c \n", 20, 30.14, printf, 'z');
     cflush();
-    free_graph();
 
     return 0;
 }
