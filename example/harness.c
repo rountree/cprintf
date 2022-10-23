@@ -36,15 +36,17 @@ int main(){
 
     printf("printf():\n");
     printf("%s | %s | %s | %-s \n", "tiny", "longer", "pretty long", "downright wordy");
+    printf("%0d | %.2f | %p | %c \n", 0, 3.14, main, 'w');
     printf("%0d | %.2f | %p | %-c \n", 0, 3.14, main, 'x');
-    printf("%0d | %.2f | %p | %-c \n", 20000, 300000.14, cprintf, 'y');
+    printf("%0d | %.2f | %p | %c \n", 20000, 300000.14, cprintf, 'y');
     printf("%0d | %.2f | %p | %-c \n", 20, 30.14, printf, 'z');
     printf("\n");
 
     printf("cprintf():\n");
     cprintf("%s | %s | %s | %-s \n", "tiny", "longer", "pretty long", "downright wordy");
+    cprintf("%0d | %.2f | %p | %c \n", 0, 3.14, main, 'x');
     cprintf("%0d | %.2f | %p | %-c \n", 0, 3.14, main, 'x');
-    cprintf("%0d | %.2f | %p | %-c \n", 20000, 300000.14, cprintf, 'y');
+    cprintf("%0d | %.2f | %p | %c \n", 20000, 300000.14, cprintf, 'y');
     cprintf("%0d | %.2f | %p | %-c \n", 20, 30.14, printf, 'z');
     cflush();
 

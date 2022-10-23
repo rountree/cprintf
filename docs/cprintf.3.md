@@ -1,11 +1,23 @@
-% CPRINTF(3) Version 0.0 | cprintf, cfprintf, csnprintf
+% CPRINTF(3) Version 0.0 | cprintf, cfprintf, csnprintf, cvfprintf, cvsprintf, cvsnprintf, cflush
 % Barry Rountree (rountree@llnl.gov)
 
 NAME
 ====
-cprintf, cfprintf, csnprintf - formatted table output
+cprintf and friends - automatically formatted table output
 
 SYNOPSIS
 ========
-**cprintf( const char ***_format_**, ...);**
+#include <cprintf.h>
+
+-lcprintf
+
+int cprintf(const char *format, ...);
+
+int cfprintf(FILE *stream, const char *format, ...);
+
+void* cflush();
+
+DESCRIPTION
+===========
+
 

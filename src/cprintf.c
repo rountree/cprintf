@@ -96,8 +96,10 @@ ptrdiff_t parse_length_modifier( const char *p );
 ptrdiff_t parse_conversion_specifier( const char *p );
 void archive( const char *p, ptrdiff_t span, char **q );
 bool is( char *p, const char *q );
+void _cprintf( FILE *stream, const char *fmt, va_list *args );
 
-static struct atom * origin = NULL;
+static struct atom *origin = NULL;
+static FILE *dest = NULL;
 
 void
 dump_graph( void ){
@@ -606,8 +608,7 @@ print_something_already(){
 }
 
 void
-cprintf( const char *fmt, ... ){
-    va_list args;
+_cprintf( FILE *stream, const char *fmt, va_list *args ){
     struct atom *a;
     const char *p = fmt, *q = fmt;
     ptrdiff_t d = 0;
@@ -619,14 +620,20 @@ cprintf( const char *fmt, ... ){
        keep parsing easy.
     */
     bool is_newline = true;
-    va_start( args, fmt );
+
+    if( dest == NULL ){
+        dest = stream;
+    }
+    // This fails if subsequent streams don't match the initial one.
+    assert( dest == stream );
+
     while( *p != '\0' ){
         d = strcspn( p, "%" ); 
         q = p;
         if( d == 0 ){
             // We've found a converstion specification.
             a = create_atom( is_newline );
-            a->pargs = &args;
+            a->pargs = args;
             a->is_conversion_specification = true;
 
             q++; // Skip over initial '%'
@@ -666,8 +673,42 @@ cprintf( const char *fmt, ... ){
         }
         is_newline = false;
     }
+}
+
+void
+cprintf( const char *fmt, ... ){
+    va_list args;
+    va_start( args, fmt );
+    _cprintf( stdout, fmt, &args );
     va_end(args);
 }
+
+void
+cfprintf( FILE *stream, const char *fmt, ... ){
+    va_list args;
+    va_start( args, fmt );
+    _cprintf( stream, fmt, &args );
+    va_end(args);
+
+}
+
+
+void
+cvprintf( const char *fmt, va_list args ){
+    va_list args2;
+    va_copy( args2, args );
+    _cprintf( stdout, fmt, &args2 );
+    va_end(args2);
+}
+
+void
+cvfprintf( FILE *stream, const char *fmt, va_list args ){
+    va_list args2;
+    va_copy( args2, args );
+    _cprintf( stream, fmt, &args2 );
+    va_end(args2);
+}
+
 
 void
 cflush(){ 
@@ -675,5 +716,5 @@ cflush(){
     generate_new_specs();
     print_something_already();
     free_graph();
+    dest = NULL;
 }
-
