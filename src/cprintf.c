@@ -384,7 +384,7 @@ calc_actual_width( struct atom *a ){
     ll          o/x/X/u         unsigned long long
     j           o/x/X/u         uintmax_t
     z           o/x/X/u         size_t
-    t           o/x/X/u         unsigned ptrdiff_t [???]
+    t           o/x/X/u         unsigned ptrdiff_t [?]
     (none)/l    f/F/e/E/a/A/g/G double
     L           f/F/e/E/a/A/g/G long double
     (none)      p               void*
@@ -577,23 +577,23 @@ print_something_already(){
         while( NULL != c ){
             if( c->is_conversion_specification ){
                 switch( c->type ){
-                    case C_INT:                 printf( c->new_specification, c->val.c_int );                break;
-                    case C_WINT_T:              printf( c->new_specification, c->val.c_wint_t );             break;
-                    case C_CHARX:               printf( c->new_specification, c->val.c_charx );              break;
-                    case C_WCHAR_TX:            printf( c->new_specification, c->val.c_wchar_tx );           break;
-                    case C_LONG:                printf( c->new_specification, c->val.c_long );               break;
-                    case C_LONG_LONG:           printf( c->new_specification, c->val.c_long_long );          break;
-                    case C_INTMAX_T:            printf( c->new_specification, c->val.c_intmax_t );           break;
-                    case C_SSIZE_T:             printf( c->new_specification, c->val.c_ssize_t );            break;
-                    case C_PTRDIFF_T:           printf( c->new_specification, c->val.c_ptrdiff_t );          break;
-                    case C_UNSIGNED_INT:        printf( c->new_specification, c->val.c_unsigned_int );       break;
-                    case C_UNSIGNED_LONG:       printf( c->new_specification, c->val.c_unsigned_long );      break;
-                    case C_UNSIGNED_LONG_LONG:  printf( c->new_specification, c->val.c_unsigned_long_long ); break;
-                    case C_UINTMAX_T:           printf( c->new_specification, c->val.c_uintmax_t );          break;
-                    case C_SIZE_T:              printf( c->new_specification, c->val.c_size_t );             break;
-                    case C_DOUBLE:              printf( c->new_specification, c->val.c_double );             break;
-                    case C_LONG_DOUBLE:         printf( c->new_specification, c->val.c_long_double );        break;
-                    case C_VOIDX:               printf( c->new_specification, c->val.c_voidx );              break;
+                    case C_INT:                 fprintf( dest, c->new_specification, c->val.c_int );                break;
+                    case C_WINT_T:              fprintf( dest, c->new_specification, c->val.c_wint_t );             break;
+                    case C_CHARX:               fprintf( dest, c->new_specification, c->val.c_charx );              break;
+                    case C_WCHAR_TX:            fprintf( dest, c->new_specification, c->val.c_wchar_tx );           break;
+                    case C_LONG:                fprintf( dest, c->new_specification, c->val.c_long );               break;
+                    case C_LONG_LONG:           fprintf( dest, c->new_specification, c->val.c_long_long );          break;
+                    case C_INTMAX_T:            fprintf( dest, c->new_specification, c->val.c_intmax_t );           break;
+                    case C_SSIZE_T:             fprintf( dest, c->new_specification, c->val.c_ssize_t );            break;
+                    case C_PTRDIFF_T:           fprintf( dest, c->new_specification, c->val.c_ptrdiff_t );          break;
+                    case C_UNSIGNED_INT:        fprintf( dest, c->new_specification, c->val.c_unsigned_int );       break;
+                    case C_UNSIGNED_LONG:       fprintf( dest, c->new_specification, c->val.c_unsigned_long );      break;
+                    case C_UNSIGNED_LONG_LONG:  fprintf( dest, c->new_specification, c->val.c_unsigned_long_long ); break;
+                    case C_UINTMAX_T:           fprintf( dest, c->new_specification, c->val.c_uintmax_t );          break;
+                    case C_SIZE_T:              fprintf( dest, c->new_specification, c->val.c_size_t );             break;
+                    case C_DOUBLE:              fprintf( dest, c->new_specification, c->val.c_double );             break;
+                    case C_LONG_DOUBLE:         fprintf( dest, c->new_specification, c->val.c_long_double );        break;
+                    case C_VOIDX:               fprintf( dest, c->new_specification, c->val.c_voidx );              break;
                     default:
                                                 assert(0);
                                                 break;

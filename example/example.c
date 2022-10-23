@@ -4,16 +4,16 @@
 #include "cprintf.h"
 
 int main(){
-    printf("printf():\n");
-    printf("%d %d %d\n", 1, 2, 3);
-    printf("%d %d %d\n", 10, 20, 30);
-    printf("%d %d %d\n", 100, 200, 300);
+    printf("fprintf():\n");
+    fprintf( stderr, "%d %d %d\n", 1, 2, 3);
+    fprintf( stderr, "%d %d %d\n", 10, 20, 30);
+    fprintf( stderr, "%d %d %d\n", 100, 200, 300);
     printf("\n");
 
-    printf("cprintf():\n");
-    cprintf("%d %d %d\n", 1, 2, 3);
-    cprintf("%d %d %d\n", 10, 20, 30);
-    cprintf("%d %d %d\n", 100, 200, 300);
+    printf("cfprintf():\n");
+    cfprintf( stderr, "%d %d %d\n", 1, 2, 3);
+    cfprintf( stderr, "%d %d %d\n", 10, 20, 30);
+    cfprintf( stderr, "%d %d %d\n", 100, 200, 300);
     cflush();
 
     printf("\n\n============\n\n");
