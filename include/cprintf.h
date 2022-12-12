@@ -1,3 +1,8 @@
+// Copyright 2022 Lawrence Livermore National Security, LLC and other
+// libjustify Project Developers. See the top-level LICENSE file for details.
+//
+// SPDX-License-Identifier: MIT
+
 #include <stdio.h>
 #include <stdarg.h>
 #ifndef __CPRINTF_H_HEADER
